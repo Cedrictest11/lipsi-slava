@@ -1,5 +1,5 @@
 # Параметры загрузки
-$GitHubRepoUrl = "https://github.com/username/repository/raw/main/path/to/sound.wav"
+$GitHubRepoUrl = "https://github.com/Cedrictest11/lipsi-slava/blob/main/mus.wav"
 $DownloadPath = "$env:TEMP\custom_startup.wav"
 $RegistryPath = "HKCU:\AppEvents\Schemes\Apps\.Default\WindowsLogon\.Current"
 
