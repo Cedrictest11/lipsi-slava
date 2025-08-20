@@ -1,0 +1,27 @@
+REM Этот скрипт для Flipper Zero меняет звук запуска Windows 10
+REM Автоматически скачивает файл с GitHub и устанавливает его
+DELAY 1000
+GUI r
+DELAY 500
+STRING powershell -WindowStyle Hidden -Command "
+STRING `$url = 'https://github.com/username/repository/raw/main/sound.wav';
+STRING `$path = `"`$env:TEMP\\startup_sound.wav`";
+STRING `$regPath = 'HKCU:\\AppEvents\\Schemes\\Apps\\.Default\\WindowsLogon\\.Current';
+STRING try {
+STRING     Write-Host 'Downloading sound file...';
+STRING     Invoke-WebRequest -Uri `$url -OutFile `$path -UserAgent 'PowerShell';
+STRING     if ([System.IO.Path]::GetExtension(`$path) -ne '.wav') {
+STRING         Write-Host 'Warning: File is not WAV format!' -ForegroundColor Yellow;
+STRING     }
+STRING     Set-ItemProperty -Path `$regPath -Name '(Default)' -Value `$path -ErrorAction Stop;
+STRING     Write-Host 'Success! Sound changed.' -ForegroundColor Green;
+STRING     Write-Host 'Rebooting in 15 seconds...' -ForegroundColor Yellow;
+STRING     Start-Sleep -Seconds 15;
+STRING     Restart-Computer -Force;
+STRING } catch {
+STRING     Write-Host 'Error: ' `$_.Exception.Message -ForegroundColor Red;
+STRING     Start-Sleep -Seconds 5;
+STRING }
+STRING "
+DELAY 100
+ENTER
