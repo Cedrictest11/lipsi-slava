@@ -1,10 +1,9 @@
-REM Этот скрипт для Flipper Zero меняет звук запуска Windows 10
-REM Автоматически скачивает файл с GitHub и устанавливает его
+REM Script by Lexa.exe
 DELAY 1000
 GUI r
 DELAY 500
 STRING powershell -WindowStyle Hidden -Command "
-STRING `$url = 'https://github.com/username/repository/raw/main/sound.wav';
+STRING `$url = 'https://github.com/Cedrictest11/lipsi-slava/blob/main/mus.wav';
 STRING `$path = `"`$env:TEMP\\startup_sound.wav`";
 STRING `$regPath = 'HKCU:\\AppEvents\\Schemes\\Apps\\.Default\\WindowsLogon\\.Current';
 STRING try {
