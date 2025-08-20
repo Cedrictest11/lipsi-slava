@@ -1,0 +1,65 @@
+# Параметры загрузки
+$GitHubRepoUrl = "https://github.com/username/repository/raw/main/path/to/sound.wav"
+$DownloadPath = "$env:TEMP\custom_startup.wav"
+$RegistryPath = "HKCU:\AppEvents\Schemes\Apps\.Default\WindowsLogon\.Current"
+
+function Download-File {
+    param(
+        [string]$Url,
+        [string]$OutputPath
+    )
+    
+    try {
+        Write-Host "Загрузка файла..." -ForegroundColor Yellow
+        Invoke-WebRequest -Uri $Url -OutFile $OutputPath -UserAgent "PowerShell"
+        return $true
+    }
+    catch {
+        Write-Host "Ошибка загрузки: $($_.Exception.Message)" -ForegroundColor Red
+        return $false
+    }
+}
+
+function Set-StartupSound {
+    param(
+        [string]$SoundPath
+    )
+    
+    try {
+        Set-ItemProperty -Path $RegistryPath -Name "(Default)" -Value $SoundPath -ErrorAction Stop
+        return $true
+    }
+    catch {
+        Write-Host "Ошибка изменения реестра: $($_.Exception.Message)" -ForegroundColor Red
+        return $false
+    }
+}
+
+# Основной процесс
+Write-Host "=== Установка пользовательского звука запуска ===" -ForegroundColor Green
+
+# Загрузка файла
+if (Download-File -Url $GitHubRepoUrl -OutputPath $DownloadPath) {
+    Write-Host "Файл успешно загружен: $DownloadPath" -ForegroundColor Green
+    
+    # Проверка формата файла
+    if ((Get-Item $DownloadPath).Extension -ne ".wav") {
+        Write-Host "Внимание: файл не в формате WAV!" -ForegroundColor Yellow
+    }
+    
+    # Установка звука
+    if (Set-StartupSound -SoundPath $DownloadPath) {
+        Write-Host "✅ Звук запуска успешно изменен!" -ForegroundColor Green
+        Write-Host "🔄 Подготовка к перезагрузке компьютера..." -ForegroundColor Cyan
+        Write-Host "📁 Файл сохранен: $DownloadPath" -ForegroundColor Gray
+        
+        # Перезагрузка компьютера через 10 секунд
+        Write-Host "`n⚠️  Компьютер перезагрузится через 10 секунд..." -ForegroundColor Yellow
+        Write-Host "Для отмены нажмите Ctrl+C" -ForegroundColor Yellow
+        Start-Sleep -Seconds 10
+        Restart-Computer -Force
+    }
+}
+else {
+    Write-Host "Не удалось завершить установку" -ForegroundColor Red
+}
